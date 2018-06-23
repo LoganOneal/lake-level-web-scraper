@@ -1,0 +1,114 @@
+<!docty3pe html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Chartist</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+        <link rel="stylesheet" type="text/css" href="https://rawgit.com/gionkunz/chartist-js/master/dist/chartist.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdn.rawgit.com/evanplaice/jquery-csv/master/src/jquery.csv.min.js"></script>
+         <style>
+            #chart {
+                height: 300px;
+                width: 100%;
+            }
+        </style>
+
+    </head>
+    <body>
+
+        <div class="ct-chart" id="chart"></div>
+
+        <script type="text/javascript" src="https://rawgit.com/gionkunz/chartist-js/master/dist/chartist.js"></script>
+
+        <script>
+fetch('http://ec2-34-201-37-105.compute-1.amazonaws.com/data/out.json').then(function(response) {
+  return response.json();
+}).then(function(data) {
+	labels = [];
+	levels2013 = [];
+	levels2014 = []; 
+	for(var i =0;i<data.length;i++){
+    	labels.push(data[i].Day);
+	levels2013.push(data[i].Value2013);
+	levels2014.push(data[i].Value2014);
+	}
+levels2013.shift();
+levels2014.shift();
+labels.shift();
+var chart = new Chartist.Line('.ct-chart', {
+  labels: labels,
+  series: [levels2013, levels2014]
+}, {
+  axisX: {
+    labelInterpolationFnc: function(value, index) {
+      //return index === 30 ? value: 'month';
+      if(index === 1) {
+      	return (value =  'January');
+        } else if(index === 30){
+	return (value = 'Febuary');
+	}
+	else if (index === 60){
+	return (value = 'March');
+	}
+	else if (index === 90){
+	return (value = 'April');
+	}
+	else if (index === 120){
+	return (value = 'May');
+	}
+	else if (index === 150){
+	return (value = 'June');
+	}
+	else if (index === 180){
+	return (value = 'July');
+	}
+	else if (index === 210){
+	return (value = 'August');
+	}
+	else if (index === 240){
+	return (value = 'November');
+	}
+	else if (index === 270){
+	return (value = 'October')
+	}
+	else if (index === 300){
+	return (value = 'November');
+	}
+	else if (index === 330){
+	return (value = 'December');
+	}
+    }},
+  fullWidth: true,
+  chartPadding: {
+    right: 10
+  },
+  lineSmooth: Chartist.Interpolation.cardinal({
+    fillHoles: true,
+  }),
+  high: 1080,
+  low: 1040,
+  showPoint: false
+});
+
+chart.on('draw', function(data) {
+  if(data.type === 'line' || data.type === 'area') {
+    data.element.animate({
+      d: {
+        begin: 2000 * data.index,
+        dur: 2000,
+        from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+        to: data.path.clone().stringify(),
+        easing: Chartist.Svg.Easing.easeOutQuint
+      }
+    });
+  }
+});
+
+
+
+});
+</script>

@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Chartist</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/gionkunz/chartist-js/master/dist/chartist.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.rawgit.com/evanplaice/jquery-csv/master/src/jquery.csv.min.js"></script>
+    <style>
+        #chart {
+            height: 300px;
+            width: 100%;
+        }
+        .ct-chart {
+            position: relative;
+        }
+        .ct-legend {
+            position: relative;
+            z-index: 10;
+            list-style: none;
+            text-align: center;
+        }
+        .ct-legend li {
+            position: relative;
+            padding-left: 23px;
+            margin-right: 10px;
+            margin-bottom: 3px;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .ct-legend li:before {
+            width: 12px;
+            height: 12px;
+            position: absolute;
+            left: 0;
+            content: '';
+            border: 3px solid transparent;
+            border-radius: 2px;
+        }
+        .ct-legend li.inactive:before {
+            background: transparent;
+        }
+        .ct-legend.ct-legend-inside {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        .ct-legend.ct-legend-inside li {
+            display: block;
+            margin: 0;
+        }
+        .ct-legend .ct-series-0:before {
+            background-color: #d70206;
+            border-color: #d70206;
+        }
+        .ct-legend .ct-series-1:before {
+            background-color: #f05b4f;
+            border-color: #f05b4f;
+        }
+        .ct-legend .ct-series-2:before {
+            background-color: #f4c63d;
+            border-color: #f4c63d;
+        }
+        .ct-legend .ct-series-3:before {
+            background-color: #d17905;
+            border-color: #d17905;
+        }
+        .ct-legend .ct-series-4:before {
+            background-color: #453d3f;
+            border-color: #453d3f;
+        }
+        .ct-legend .ct-series-5:before {
+            background-color: #47992E;
+            border-color: #47992E;
+        }
+        .ct-chart-line-multipleseries .ct-legend .ct-series-0:before {
+            background-color: #d70206;
+            border-color: #d70206;
+        }
+        .ct-chart-line-multipleseries .ct-legend .ct-series-1:before {
+            background-color: #f4c63d;
+            border-color: #f4c63d;
+        }
+        .ct-chart-line-multipleseries .ct-legend li.inactive:before {
+            background: transparent;
+        }
+        .crazyPink li.ct-series-0:before {
+            background-color: #C2185B;
+            border-color: #C2185B;
+        }
+        .crazyPink li.ct-series-1:before {
+            background-color: #E91E63;
+            border-color: #E91E63;
+        }
+        .crazyPink li.ct-series-2:before {
+            background-color: #F06292;
+            border-color: #F06292;
+        }
+        .crazyPink li.inactive:before {
+            background-color: transparent;
+        }
+        .crazyPink ~ svg .ct-series-a .ct-line,
+        .crazyPink ~ svg .ct-series-a .ct-point {
+            stroke: #C2185B;
+        }
+        .crazyPink ~ svg .ct-series-b .ct-line,
+        .crazyPink ~ svg .ct-series-b .ct-point {
+            stroke: #E91E63;
+        }
+        .crazyPink ~ svg .ct-series-c .ct-line,
+        .crazyPink ~ svg .ct-series-c .ct-point {
+            stroke: #F06292;
+        }
+        #any-div-anywhere {
+            border: 1px solid #5b4421;
+        }
+        /* Page styling */
+        
+        h1,
+        h2,
+        h3 {
+            color: #5b4421;
+            text-transform: uppercase;
+        }
+        h1,
+        h2 {
+            text-align: center;
+        }
+        h3 > * {
+            text-transform: none;
+        }
+        .codeblock-hidden {
+            display: none;
+        }
+        .javascript.hljs {
+            background-color: #453D3F;
+            padding: 1.3333333333rem;
+            color: #f7f2ea;
+            font-family: "Source Code Pro", "Courier New", monospace!important;
+            line-height: 1.4;
+            word-wrap: break-word;
+            height: auto;
+            margin-bottom: 1.3333333333rem
+        }
+        .ct-hidden {
+            opacity: 0;
+        }
+        .ct-dimmed {
+            opacity: 0.5;
+        }
+        .javascript.hljs span::selection,
+        .javascript.hljs::selection {
+            background: #2a2526!important
+        }
+        .javascript.hljs .hljs-comment {
+            color: #7b6d70
+        }
+        .javascript.hljs .hljs-atom,
+        .javascript.hljs .hljs-number {
+            color: #F4C63D
+        }
+        .cm-s-3024-day .hljs-attribute,
+        .javascript.hljs .hljs-property {
+            color: #f7f2ea
+        }
+        .javascript.hljs .hljs-keyword {
+            color: #F05B4F;
+            font-weight: 700
+        }
+        .javascript.hljs .hljs-string {
+            color: #F4C63D
+        }
+        .javascript.hljs .hljs-variable {
+            color: #f7f2ea
+        }
+        .javascript.hljs .hljs-def,
+        .javascript.hljs .hljs-variable-2 {
+            color: #f8b3ad
+        }
+        .javascript.hljs .hljs-bracket {
+            color: #3a3432
+        }
+        .javascript.hljs .hljs-tag {
+            color: #F05B4F;
+            font-weight: 700
+        }
+        .javascript.hljs .hljs-link {
+            color: #F4C63D
+        }
+        .javascript.hljs .hljs-error {
+            background-color: #F05B4F;
+            color: #453D3F
+        }
+        .javascript.hljs .hljs-literal {
+            color: #F05B4F;
+        }
+        .javascript.hljs .CodeMirror-activeline-background {
+            background: #e8f2ff!important
+        }
+        .javascript.hljs .CodeMirror-matchingbracket {
+            text-decoration: underline;
+            color: #fff!important
+        }
+        .button,
+        button {
+            border-radius: 0;
+            border-style: solid;
+            border-width: 0;
+            cursor: pointer;
+            font-weight: 400;
+            line-height: normal;
+            margin: 5px auto;
+            text-align: center;
+            display: block;
+            padding: 1rem 2rem 1.0625rem;
+            font-size: 1rem;
+            background-color: #F4C63D;
+            border-color: #e7b00d;
+            color: #453D3F;
+        }
+        body {
+            background: #EADBC4;
+            line-height: 1.54;
+            background-image: url(data:image/png;base64,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);
+            background-position: 50% 50%;
+            background-repeat: repeat repeat;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="ct-chart" id="chart"></div>
+
+    <script type="text/javascript" src="https://rawgit.com/gionkunz/chartist-js/master/dist/chartist.js"></script>
+    <script>
+        ! function(e, t) {
+            "function" == typeof define && define.amd ? define(["chartist"], function(s) {
+                return e.returnExportsGlobal = t(s)
+            }) : "object" == typeof exports ? module.exports = t(require("chartist")) : e["Chartist.plugins.legend"] = t(e.Chartist)
+        }(this, function(e) {
+            "use strict";
+            var t = {
+                className: "",
+                classNames: !1,
+                removeAll: !1,
+                legendNames: !1,
+                clickable: !0,
+                onClick: null,
+                position: "top"
+            };
+            return e.plugins = e.plugins || {}, e.plugins.legend = function(s) {
+                function i(e, t) {
+                    return e - t
+                }
+                if (s && s.position) {
+                    if (!("top" === s.position || "bottom" === s.position || s.position instanceof HTMLElement)) throw Error("The position you entered is not a valid position");
+                    if (s.position instanceof HTMLElement) {
+                        var a = s.position;
+                        delete s.position
+                    }
+                }
+                return s = e.extend({}, t, s), a && (s.position = a),
+                    function(t) {
+                        var a = t.container.querySelector(".ct-legend");
+                        if (a && a.parentNode.removeChild(a), s.clickable) {
+                            var n = t.data.series.map(function(s, i) {
+                                return "object" != typeof s && (s = {
+                                    value: s
+                                }), s.className = s.className || t.options.classNames.series + "-" + e.alphaNumerate(i), s
+                            });
+                            t.data.series = n
+                        }
+                        var o = document.createElement("ul"),
+                            l = t instanceof e.Pie;
+                        o.className = "ct-legend", t instanceof e.Pie && o.classList.add("ct-legend-inside"), "string" == typeof s.className && s.className.length > 0 && o.classList.add(s.className), t.options.width && (o.style.cssText = "width: " + t.options.width + "px;margin: 0 auto;");
+                        var r = [],
+                            c = t.data.series.slice(0),
+                            d = t.data.series,
+                            p = l && t.data.labels;
+                        if (p) {
+                            var u = t.data.labels.slice(0);
+                            d = t.data.labels
+                        }
+                        d = s.legendNames || d;
+                        var f = Array.isArray(s.classNames) && s.classNames.length === d.length;
+                        d.forEach(function(e, t) {
+                            var i = document.createElement("li");
+                            i.className = "ct-series-" + t, f && (i.className += " " + s.classNames[t]), i.setAttribute("data-legend", t), i.textContent = e.name || e, o.appendChild(i)
+                        }), t.on("created", function(e) {
+                            if (s.position instanceof HTMLElement) s.position.insertBefore(o, null);
+                            else switch (s.position) {
+                                case "top":
+                                    t.container.insertBefore(o, t.container.childNodes[0]);
+                                    break;
+                                case "bottom":
+                                    t.container.insertBefore(o, null)
+                            }
+                        }), s.clickable && o.addEventListener("click", function(e) {
+                            var a = e.target;
+                            if (a.parentNode === o && a.hasAttribute("data-legend")) {
+                                e.preventDefault();
+                                var n = parseInt(a.getAttribute("data-legend")),
+                                    l = r.indexOf(n);
+                                if (l > -1) r.splice(l, 1), a.classList.remove("inactive");
+                                else if (s.removeAll) r.push(n), a.classList.add("inactive");
+                                else if (t.data.series.length > 1) r.push(n), a.classList.add("inactive");
+                                else {
+                                    r = [];
+                                    var d = Array.prototype.slice.call(o.childNodes);
+                                    d.forEach(function(e) {
+                                        e.classList.remove("inactive")
+                                    })
+                                }
+                                var f = c.slice(0);
+                                if (p) var m = u.slice(0);
+                                r.sort(i).reverse(), r.forEach(function(e) {
+                                    f.splice(e, 1), p && m.splice(e, 1)
+                                }), s.onClick && s.onClick(t, e), t.data.series = f, p && (t.data.labels = m), t.update()
+                            }
+                        })
+                    }
+            }, e.plugins.legend
+        });
+        //# sourceMappingURL=chartist-plugin-legend.min.js.map
+    </script>
+    <script>
+        fetch('data/out.json').then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            labels = [];
+            levels2013 = [];
+            levels2014 = [];
+            levels2015 = [];
+            levels2016 = [];
+            levels2017 = [];
+            levels2018 = [];
+
+            for (var i = 0; i < data.length; i++) {
+                labels.push(data[i].Day);
+                levels2013.push(data[i].Value2013);
+                levels2014.push(data[i].Value2014);
+                levels2015.push(data[i].Value2015);
+                levels2016.push(data[i].Value2016);
+                levels2017.push(data[i].Value2017);
+                levels2018.push(data[i].Value2018);
+            }
+            levels2013.shift();
+            levels2014.shift();
+            levels2015.shift();
+            levels2016.shift();
+            levels2017.shift();
+            levels2018.shift();
+            labels.shift();
+            var chart = new Chartist.Line('.ct-chart', {
+                labels: labels,
+                series: [levels2013, levels2014, levels2015, levels2016, levels2017, levels2018]
+            }, {
+                axisX: {
+                    labelInterpolationFnc: function(value, index) {
+                        //return index === 30 ? value: 'month';
+                        if (index === 1) {
+                            return (value = 'January');
+                        } else if (index === 30) {
+                            return (value = 'Febuary');
+                        } else if (index === 60) {
+                            return (value = 'March');
+                        } else if (index === 90) {
+                            return (value = 'April');
+                        } else if (index === 120) {
+                            return (value = 'May');
+                        } else if (index === 150) {
+                            return (value = 'June');
+                        } else if (index === 180) {
+                            return (value = 'July');
+                        } else if (index === 210) {
+                            return (value = 'August');
+                        } else if (index === 240) {
+                            return (value = 'November');
+                        } else if (index === 270) {
+                            return (value = 'October')
+                        } else if (index === 300) {
+                            return (value = 'November');
+                        } else if (index === 330) {
+                            return (value = 'December');
+                        }
+                    }
+                },
+                fullWidth: true,
+                chartPadding: {
+                    right: 10
+                },
+                lineSmooth: Chartist.Interpolation.cardinal({
+                    fillHoles: true,
+                }),
+                high: 1080,
+                low: 1040,
+                showPoint: false,
+                plugins: [
+                    Chartist.plugins.legend({
+                        legendNames: ['2013', '2014', '2015', '2016', '2017', '2018'],
+                    })
+                ]
+            });
+
+            chart.on('draw', function(data) {
+                if (data.type === 'line' || data.type === 'area') {
+                    data.element.animate({
+                        d: {
+                            begin: 2000 * data.index,
+                            dur: 2000,
+                            from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                            to: data.path.clone().stringify(),
+                            easing: Chartist.Svg.Easing.easeOutQuint
+                        }
+                    });
+                }
+            });
+
+
+
+        });
+    </script>
